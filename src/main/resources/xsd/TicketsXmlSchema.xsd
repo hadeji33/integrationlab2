@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<!--
++ 1) схеме должно быть сопоставлено определенное пространство имен, при этом должна быть предусмотрена квалификация элементов, определенных схемой, в документе, построенном на ее основе
+
++ 2) документ-пример должен содержать ссылку на XML-схему
+
++ 3) схема должна демонстрировать использование конструкций для описания сложного типа, образованного вложенными элементами и атрибутами; 
+    при этом должен быть хотя бы один сложный тип, хотя бы один вложенный элемент которого был бы также сложного типа;
+    при описании сложных типов необходимо продемонстрировать использование не менее двух видов модельных групп (sequence, choice и all)
+
++ 4) схема должна содержать описание абстрактного сложного типа и элемента этого типа, а пример документа - демонстрировать использование последнего
+
++ 5) схема должна демонстрировать возможность описания нового сложного типа на базе как простого типа, так и сложного как путем расширения, так и путем ограничения
+
++ 6) схема должна демонстрировать возможности описания новых простых типов на базе существующих (в том числе описание перечислимого типа) с использованием не менее трех видов фасетов
+
+7) схема должна содержать описание ограничения уникальности, ключа и ссылки на ключ, применение чего должно иметь смысл в предметной области
+
+-->
+
+<schema version="1.0"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        targetNamespace="default"
+        xmlns:tns="default">
+    
+    <complexType name="TicketsType">
+        <sequence>
+            <element name="Bookings" type="tns:BookingsType" minOccurs="1" maxOccurs="50">
+                <unique name="uniqueNumber">
+                    <selector xpath="."/>
+                    <field xpath="Bookings/NumberBookings"/>
+                </unique>
+            </element>
+        </sequence>
+    </complexType>
+
+    <element name="order" type="tns:TicketsType"/>
+    
+    <simpleType name="bookingNumber">
+        <restriction base="string">
+            <length value="12"/>
+            <pattern value="[0-9]{3}-[0-9]{2}-[0-9]{2}-[0-9]{2}"/>
+        </restriction>
+    </simpleType>
+
+
+    <complexType name="BookingsType">
+        <sequence>
+            <element name="NumberBookings" type="tns:bookingNumber"/>
+            <element name="StartBookingsDate" type="date"/>
+            <element name="StartBookingsTime" type="time"/>
+            <element name="EndBookingsDate" type="date"/>
+            <element name="EndBookingsTime" type="time"/>
+            <element name="Cart" type="tns:CartType"/>
+        </sequence>
+    </complexType>
+    
+    <complexType name="CartType">
+        <sequence>
+            <element name="TicketBooking" type="tns:TicketBookingType" minOccurs="1" maxOccurs="20"/>
+            <element name="User" type="tns:UserType"/>
+        </sequence>
+        <attribute name="ticketCount" type="positiveInteger"/>
+        <attribute name="totalToBuy" type="double"/>
+    </complexType>
+
+    <simpleType name="zoneType">
+        <restriction base="string">
+            <enumeration value="Танцевальный партер"/>
+            <enumeration value="Партер"/>
+            <enumeration value="Балкон"/>
+        </restriction>
+    </simpleType>
+    
+    <attributeGroup  name="TicketElements">
+        <attribute name="ticketId" type="string"/>
+        <attribute name="eventId" type="string"/>
+        <attribute name="ticketPrice" type="string"/>
+        <attribute name="eventDate" type="dateTime"/>
+    </attributeGroup >
+    
+    <complexType name="TicketType" abstract="true">
+        <sequence>
+            <element name="Zone" type="tns:zoneType" minOccurs="0" />
+            <element name="Place" type="tns:PlaceType"  minOccurs="0"/>
+        </sequence>
+        <attributeGroup ref="tns:TicketElements"/> 
+    </complexType>
+    
+    <complexType name="TicketBookingType" >
+        <complexContent>
+            <extension base="tns:TicketType">
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="PlaceType">
+        <sequence>
+            <element name="Row" type="integer"/>
+            <element name="Number" type="integer" />  
+        </sequence>
+    </complexType>
+    
+    <complexType name="UserType">
+        <all>
+            <element name="UserFname" type="string"/>
+            <element name="UserSname" type="string"/>
+        </all>
+        <attribute name="userId" type="string"/>
+    </complexType>
+</schema>

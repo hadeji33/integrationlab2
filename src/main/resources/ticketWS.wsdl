@@ -1,0 +1,70 @@
+<?xml version=1.0 encoding=UTF-8?>
+<definitions
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+        xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        name="ticketWS"
+>
+    <types>
+        <xsd:schema>
+            <xsd:import namespace="default" schemaLocation="xsd/TicketsXmlSchema.xsd"/>
+        </xsd:schema>
+    </types>
+    <message name="bookingListRequest">
+        <part name="body" type="xsd:string" />
+    </message>
+    <message name="bookingListResponse">
+        <part name="body" element="order" />
+    </message>
+    <message name="bookingNumberRequest">
+        <part name="body" type="xsd:string" />
+    </message>
+    <message name="bookingNumberResponse">
+        <part name="body" type="xsd:string" />
+    </message>
+    <message name="deleteBookingByNumberRequest">
+        <part name="body" type="xsd:string" />
+    </message>
+    <message name="deleteBookingByNumberResponse">
+        <part name="body" type="xsd:string" />
+    </message>
+
+    <portType name="TicketWSPortType">
+        <operation name="getListOfBookings">
+            <input message="bookingListRequest"/>
+            <output message="bookingListResponse"/>
+        </operation>
+        <operation name="getListOfBookingsByNumber">
+            <input message="bookingNumberRequest"/>
+            <output message="bookingNumberResponse"/>
+        </operation>
+        <operation name="deleteBookingByNumber">
+            <input message="deleteBookingByNumberRequest"/>
+            <output message="deleteBookingByNumberResponse"/>
+        </operation>
+    </portType>
+
+    <binding name="TicketWSPortBinding" type="tns:TicketWSPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/wsdl/soap/http" style="document"/>
+        <operation name="getListOfBookings">
+            <soap:operation soapAction="getListOfBookings"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+
+    </binding>
+
+    <service name="ticketWS">
+        <port name="tickerWSPort" binding="">
+            <soap:address location="http://localhost:8080/lab2/TicketWS" />
+        </port>
+    </service>
+
+</definitions>
